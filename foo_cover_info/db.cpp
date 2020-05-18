@@ -99,43 +99,9 @@ namespace cinfo
 		}
 	};
 
-	class my_track_property_provider_v4 : public track_property_provider_v4
-	{
-	public:
-		bool is_our_tech_info(const char* name) override
-		{
-			return false;
-		}
-
-		void enumerate_properties_helper(metadb_handle_list_cref handles, track_property_provider_v3_info_source& info, track_property_callback_v2& callback, abort_callback& abort)
-		{
-			if (callback.is_group_wanted(component_name))
-			{
-				const auto count = handles.get_count();
-				if (count == 1)
-				{
-					metadb_index_hash hash;
-					if (hashHandle(handles[0], hash))
-					{
-						const fields tmp = get(hash);
-						callback.set_property(component_name, 0, "Front Cover Width", std::to_string(tmp.front_cover_width).c_str());
-						callback.set_property(component_name, 1, "Front Cover Height", std::to_string(tmp.front_cover_height).c_str());
-						callback.set_property(component_name, 2, "Front Cover Size", pfc::format_file_size_short(tmp.front_cover_bytes));
-					}
-				}
-			}
-		}
-
-		void enumerate_properties_v4(metadb_handle_list_cref handles, track_property_provider_v3_info_source & info, track_property_callback_v2 & callback, abort_callback & abort) override
-		{
-			enumerate_properties_helper(handles, info, callback, abort);
-		}
-	};
-
 	FB2K_SERVICE_FACTORY(my_init_stage_callback);
 	FB2K_SERVICE_FACTORY(my_initquit);
 	FB2K_SERVICE_FACTORY(my_metadb_display_field_provider);
-	FB2K_SERVICE_FACTORY(my_track_property_provider_v4);
 
 	bool hashHandle(const metadb_handle_ptr& handle, metadb_index_hash& hash)
 	{
