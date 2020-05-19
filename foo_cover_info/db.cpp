@@ -136,12 +136,39 @@ namespace cinfo
 		return ret;
 	}
 
+	void get_hashes(metadb_handle_list_cref handles, hash_set& hashes)
+	{
+		const size_t count = handles.get_count();
+		for (size_t i = 0; i < count; ++i)
+		{
+			metadb_index_hash hash;
+			if (hashHandle(handles[i], hash))
+			{
+				hashes.emplace(hash);
+			}
+		}
+	}
+
 	void refresh(const pfc::list_t<metadb_index_hash>& hashes)
 	{
 		fb2k::inMainThread([hashes]
 			{
 				theAPI()->dispatch_refresh(guid_metadb_index, hashes);
 			});
+	}
+
+	void reset(metadb_handle_list_cref handles)
+	{
+		hash_set hashes;
+		get_hashes(handles, hashes);
+		pfc::list_t<metadb_index_hash> to_refresh;
+
+		for (const auto hash : hashes)
+		{
+			set(hash, fields());
+			to_refresh += hash;
+		}
+		refresh(to_refresh);
 	}
 
 	void set(metadb_index_hash hash, fields f)

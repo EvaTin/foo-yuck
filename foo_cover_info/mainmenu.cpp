@@ -37,30 +37,27 @@ namespace cinfo
 
 		void execute(size_t index, service_ptr_t<service_base> callback) override
 		{
-			if (!library_manager::get()->is_library_enabled())
+			core_api::ensure_main_thread();
+			auto api = library_manager::get();
+
+			if (!api->is_library_enabled())
 			{
 				popup_message::g_show("You must configure your Media Library first.", component_name);
 				return;
 			}
 
+			metadb_handle_list items;
+			api->get_all_items(items);
+
 			if (index == 0)
 			{
-				metadb_handle_list items;
-				library_manager::get()->get_all_items(items);
-
 				auto flags = threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item | threaded_process::flag_show_abort;
 				auto cb = fb2k::service_new<cover_info>(items);
 				threaded_process::get()->run_modeless(cb, flags, core_api::get_main_window(), "Scanning for covers...");
 			}
 			else if (index == 1)
 			{
-				pfc::list_t<metadb_index_hash> hashes;
-				theAPI()->get_all_hashes(guid_metadb_index, hashes);
-				for (size_t i = 0; i < hashes.get_count(); ++i)
-				{
-					set(hashes[i], fields());
-				}
-				refresh(hashes);
+				reset(items);
 			}
 		}
 
