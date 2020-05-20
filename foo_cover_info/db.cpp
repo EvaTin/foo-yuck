@@ -1,7 +1,5 @@
 #include "stdafx.h"
 
-#include <array>
-
 namespace cinfo
 {
 	static constexpr std::array<const char*, 3> field_names =

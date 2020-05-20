@@ -32,7 +32,7 @@ namespace cinfo
 
 		size_t get_command_count() override
 		{
-			return 2;
+			return command_names.size();
 		}
 
 		void execute(size_t index, service_ptr_t<service_base> callback) override
@@ -63,8 +63,7 @@ namespace cinfo
 
 		void get_name(size_t index, pfc::string_base& out) override
 		{
-			if (index == 0) out = "Scan for Cover Info";
-			else if (index == 1) out = "Clear all Cover Info";
+			out = command_names[index];
 		}
 	};
 

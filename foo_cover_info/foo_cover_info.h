@@ -17,6 +17,12 @@ namespace cinfo
 	static constexpr GUID guid_context_scan = { 0x1fac520f, 0x63e7, 0x46e4, { 0xb8, 0x22, 0x50, 0x7c, 0x92, 0x7b, 0x53, 0x37 } };
 	static constexpr GUID guid_context_clear = { 0x3069bf41, 0xec99, 0x406b, { 0x95, 0x81, 0xae, 0x2b, 0xb3, 0x25, 0x65, 0x3c } };
 
+	static constexpr std::array<const char*, 2> command_names =
+	{
+		"Scan for Cover Info",
+		"Clear Cover Info"
+	};
+
 	class cover_info : public threaded_process_callback
 	{
 	public:

@@ -5,8 +5,6 @@ namespace cinfo
 	class my_contextmenu_item_simple : public contextmenu_item_simple
 	{
 	public:
-		my_contextmenu_item_simple() {}
-
 		GUID get_item_guid(uint32_t index) override
 		{
 			if (index == 0) return guid_context_scan;
@@ -33,7 +31,7 @@ namespace cinfo
 
 		size_t get_num_items() override
 		{
-			return 2;
+			return command_names.size();
 		}
 
 		void context_command(size_t index, metadb_handle_list_cref handles, const GUID& caller) override
@@ -52,8 +50,7 @@ namespace cinfo
 
 		void get_item_name(size_t index, pfc::string_base& out) override
 		{
-			if (index == 0) out = "Scan for Cover Info";
-			else if (index == 1) out = "Clear all Cover Info";
+			out = command_names[index];
 		}
 	};
 
