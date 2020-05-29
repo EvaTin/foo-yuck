@@ -16,10 +16,7 @@ namespace cinfo
 	public:
 		metadb_index_hash transform(const file_info& info, const playable_location& location) override
 		{
-			titleformat_object::ptr obj;
-			titleformat_compiler::get()->compile_force(obj, "%path%");
-			pfc::string8_fast str;
-			obj->run_simple(location, &info, str);
+			const char* str = file_path_display(location.get_path());
 			return hasher_md5::get()->process_single_string(str).xorHalve();
 		}
 	};
