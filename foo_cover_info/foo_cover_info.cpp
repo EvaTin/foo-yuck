@@ -14,10 +14,9 @@ namespace cinfo
 	void cover_info::run(threaded_process_status& status, abort_callback& abort)
 	{
 		const size_t count = m_handles.get_count();
-		hash_set hashes;
-		pfc::list_t<metadb_index_hash> to_refresh;
-
 		size_t counter = 0, found = 0, skipped = 0;
+		hash_list to_refresh;
+		hash_set hashes;
 
 		for (size_t i = 0; i < count; ++i)
 		{

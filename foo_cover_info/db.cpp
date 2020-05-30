@@ -144,7 +144,7 @@ namespace cinfo
 		}
 	}
 
-	void refresh(const pfc::list_t<metadb_index_hash>& hashes)
+	void refresh(const hash_list& hashes)
 	{
 		fb2k::inMainThread([hashes]
 			{
