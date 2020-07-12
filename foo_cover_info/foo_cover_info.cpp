@@ -55,11 +55,11 @@ namespace cinfo
 
 					if (data.is_valid())
 					{
-						CComPtr<IStream> stream;
+						pfc::com_ptr_t<IStream> stream;
 						ULONG bytes_written = 0;
-						if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, &stream)) && SUCCEEDED(stream->Write(data->get_ptr(), data->get_size(), &bytes_written)) && bytes_written == data->get_size())
+						if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, stream.receive_ptr())) && SUCCEEDED(stream->Write(data->get_ptr(), data->get_size(), &bytes_written)))
 						{
-							pfc::ptrholder_t<Gdiplus::Bitmap> bitmap = new Gdiplus::Bitmap(stream, TRUE);
+							pfc::ptrholder_t<Gdiplus::Bitmap> bitmap = new Gdiplus::Bitmap(stream.get_ptr());
 							if (bitmap.is_valid() && bitmap->GetLastStatus() == Gdiplus::Ok)
 							{
 								found++;
