@@ -80,8 +80,8 @@ namespace cinfo
 		refresh(to_refresh);
 
 		FB2K_console_formatter() << "Cover Info: " << count << " items scanned.";
-		FB2K_console_formatter() << "Cover Info: " << counter << " items are capable of containing covers.";
-		FB2K_console_formatter() << "Cover Info: " << skipped << " items were skipped (file modification time was same as last run).";
-		FB2K_console_formatter() << "Cover Info: " << found << " new/modified items have covers.";
+		FB2K_console_formatter() << "Cover Info: " << counter << " files are capable of containing covers.";
+		FB2K_console_formatter() << "Cover Info: " << skipped << " files were skipped (file modification time was same as last run).";
+		FB2K_console_formatter() << "Cover Info: " << found << " new/modified files have covers.";
 	}
 }
