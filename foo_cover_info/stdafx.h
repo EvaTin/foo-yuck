@@ -1,6 +1,6 @@
 #pragma once
-#define _WIN32_WINNT _WIN32_WINNT_VISTA
-#define WINVER _WIN32_WINNT_VISTA
+#define _WIN32_WINNT _WIN32_WINNT_WIN7
+#define WINVER _WIN32_WINNT_WIN7
 
 #include <array>
 #include <set>
