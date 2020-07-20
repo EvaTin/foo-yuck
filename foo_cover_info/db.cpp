@@ -9,9 +9,9 @@ namespace cinfo
 		"front_cover_size",
 	};
 
-	metadb_index_manager::ptr g_cachedAPI;
+	static metadb_index_manager::ptr g_cachedAPI;
 
-	class my_metadb_index_client : public metadb_index_client
+	class MetadbIndexClient : public metadb_index_client
 	{
 	public:
 		metadb_index_hash transform(const file_info& info, const playable_location& location) override
@@ -20,33 +20,31 @@ namespace cinfo
 			return hasher_md5::get()->process_single_string(str).xorHalve();
 		}
 	};
-	static auto g_client = new service_impl_single_t<my_metadb_index_client>;
+	static auto g_client = new service_impl_single_t<MetadbIndexClient>;
 
-	class my_init_stage_callback : public init_stage_callback
+	class InitStageCallback : public init_stage_callback
 	{
 	public:
 		void on_init_stage(size_t stage) override
 		{
 			if (stage == init_stages::before_config_read)
 			{
-				auto api = metadb_index_manager::get();
-				g_cachedAPI = api;
+				g_cachedAPI = metadb_index_manager::get();
 				try
 				{
-					api->add(g_client, guid_metadb_index, system_time_periods::week * 4);
+					g_cachedAPI->add(g_client, guid_metadb_index, system_time_periods::week * 4);
+					g_cachedAPI->dispatch_global_refresh();
 				}
 				catch (const std::exception& e)
 				{
-					api->remove(guid_metadb_index);
+					g_cachedAPI->remove(guid_metadb_index);
 					FB2K_console_formatter() << component_name << " stats: Critical initialisation failure: " << e;
-					return;
 				}
-				api->dispatch_global_refresh();
 			}
 		}
 	};
 
-	class my_initquit : public initquit
+	class InitQuit : public initquit
 	{
 	public:
 		void on_quit() override
@@ -55,7 +53,7 @@ namespace cinfo
 		}
 	};
 
-	class my_metadb_display_field_provider : public metadb_display_field_provider
+	class MetadbDisplayFieldProvider : public metadb_display_field_provider
 	{
 	public:
 		bool process_field(size_t index, metadb_handle* handle, titleformat_text_out* out) override
@@ -94,9 +92,9 @@ namespace cinfo
 		}
 	};
 
-	FB2K_SERVICE_FACTORY(my_init_stage_callback);
-	FB2K_SERVICE_FACTORY(my_initquit);
-	FB2K_SERVICE_FACTORY(my_metadb_display_field_provider);
+	FB2K_SERVICE_FACTORY(InitStageCallback);
+	FB2K_SERVICE_FACTORY(InitQuit);
+	FB2K_SERVICE_FACTORY(MetadbDisplayFieldProvider);
 
 	bool hashHandle(const metadb_handle_ptr& handle, metadb_index_hash& hash)
 	{
@@ -126,9 +124,8 @@ namespace cinfo
 
 	metadb_index_manager::ptr theAPI()
 	{
-		auto ret = g_cachedAPI;
-		if (ret.is_empty()) ret = metadb_index_manager::get();
-		return ret;
+		if (g_cachedAPI.is_empty()) g_cachedAPI = metadb_index_manager::get();
+		return g_cachedAPI;
 	}
 
 	void get_hashes(metadb_handle_list_cref handles, hash_set& hashes)
@@ -154,9 +151,9 @@ namespace cinfo
 
 	void reset(metadb_handle_list_cref handles)
 	{
+		hash_list to_refresh;
 		hash_set hashes;
 		get_hashes(handles, hashes);
-		pfc::list_t<metadb_index_hash> to_refresh;
 
 		for (const auto hash : hashes)
 		{
