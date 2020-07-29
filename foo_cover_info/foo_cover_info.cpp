@@ -62,6 +62,7 @@ namespace cinfo
 
 						if (modern)
 						{
+							found++;
 							fb2k::imageInfo_t info = api->getInfo(data);
 							f.front_cover_width = info.width;
 							f.front_cover_height = info.height;
