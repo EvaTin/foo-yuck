@@ -4,7 +4,7 @@ namespace cinfo
 {
 	static constexpr const char* component_name = "Cover Info";
 	static constexpr const char* component_dll_name = "foo_cover_info.dll";
-	static constexpr const char* component_version = "0.0.4";
+	static constexpr const char* component_version = "0.0.5";
 	static constexpr const char* component_info = "Copyright (C) 2020 marc2003\n\nBuild: " __TIME__ ", " __DATE__;
 
 	static constexpr GUID guid_metadb_index = { 0x95ea6d78, 0x81, 0x4080, { 0xa5, 0x99, 0x64, 0xa1, 0x48, 0xba, 0xbc, 0xe5 } };
