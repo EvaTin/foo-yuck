@@ -8,6 +8,7 @@ namespace cinfo
 		size_t front_cover_height = 0;
 		size_t front_cover_bytes = 0;
 		uint64_t last_modified = 0;
+		pfc::string8_fast front_cover_format;
 	};
 
 	using hash_list = pfc::list_t<metadb_index_hash>;

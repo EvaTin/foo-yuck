@@ -2,11 +2,12 @@
 
 namespace cinfo
 {
-	static constexpr std::array<const char*, 3> field_names =
+	static constexpr std::array<const char*, 4> field_names =
 	{
 		"front_cover_width",
 		"front_cover_height",
 		"front_cover_size",
+		"front_cover_format",
 	};
 
 	static metadb_index_manager::ptr g_cachedAPI;
@@ -77,6 +78,10 @@ namespace cinfo
 				if (tmp.front_cover_bytes == 0) return false;
 				out->write(titleformat_inputtypes::meta, pfc::format_file_size_short(tmp.front_cover_bytes));
 				return true;
+			case 3:
+				if (tmp.front_cover_format.is_empty()) return false;
+				out->write(titleformat_inputtypes::meta, tmp.front_cover_format);
+				return true;
 			}
 			return false;
 		}
@@ -115,6 +120,10 @@ namespace cinfo
 				reader >> f.front_cover_height;
 				reader >> f.front_cover_bytes;
 				reader >> f.last_modified;
+				if (reader.get_remaining() > 0)
+				{
+					reader >> f.front_cover_format;
+				}
 				return f;
 			}
 			catch (exception_io_data) {}
@@ -170,6 +179,7 @@ namespace cinfo
 		writer << f.front_cover_height;
 		writer << f.front_cover_bytes;
 		writer << f.last_modified;
+		writer << f.front_cover_format;
 		theAPI()->set_user_data(guid_metadb_index, hash, writer.m_buffer.get_ptr(), writer.m_buffer.get_size());
 	}
 }

@@ -67,6 +67,8 @@ namespace cinfo
 							f.front_cover_width = info.width;
 							f.front_cover_height = info.height;
 							f.front_cover_bytes = bytes;
+
+							if (info.formatName != nullptr) f.front_cover_format = info.formatName;
 						}
 						else
 						{
