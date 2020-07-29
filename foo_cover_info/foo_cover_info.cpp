@@ -18,6 +18,9 @@ namespace cinfo
 		hash_list to_refresh;
 		hash_set hashes;
 
+		auto api = fb2k::imageLoaderLite::tryGet();
+		bool modern = api.is_valid();
+
 		for (size_t i = 0; i < count; ++i)
 		{
 			abort.check();
@@ -55,17 +58,29 @@ namespace cinfo
 
 					if (data.is_valid())
 					{
-						pfc::com_ptr_t<IStream> stream;
-						ULONG bytes_written = 0;
-						if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, stream.receive_ptr())) && SUCCEEDED(stream->Write(data->get_ptr(), data->get_size(), &bytes_written)))
+						size_t bytes = data->get_size();
+
+						if (modern)
 						{
-							pfc::ptrholder_t<Gdiplus::Bitmap> bitmap = new Gdiplus::Bitmap(stream.get_ptr());
-							if (bitmap.is_valid() && bitmap->GetLastStatus() == Gdiplus::Ok)
+							fb2k::imageInfo_t info = api->getInfo(data);
+							f.front_cover_width = info.width;
+							f.front_cover_height = info.height;
+							f.front_cover_bytes = bytes;
+						}
+						else
+						{
+							pfc::com_ptr_t<IStream> stream;
+							ULONG bytes_written = 0;
+							if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, stream.receive_ptr())) && SUCCEEDED(stream->Write(data->get_ptr(), data->get_size(), &bytes_written)))
 							{
-								found++;
-								f.front_cover_width = bitmap->GetWidth();
-								f.front_cover_height = bitmap->GetHeight();
-								f.front_cover_bytes = data->get_size();
+								pfc::ptrholder_t<Gdiplus::Bitmap> bitmap = new Gdiplus::Bitmap(stream.get_ptr());
+								if (bitmap.is_valid() && bitmap->GetLastStatus() == Gdiplus::Ok)
+								{
+									found++;
+									f.front_cover_width = bitmap->GetWidth();
+									f.front_cover_height = bitmap->GetHeight();
+									f.front_cover_bytes = bytes;
+								}
 							}
 						}
 					}
