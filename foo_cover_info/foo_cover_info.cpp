@@ -72,9 +72,8 @@ namespace cinfo
 						}
 						else
 						{
-							pfc::com_ptr_t<IStream> stream;
-							ULONG bytes_written = 0;
-							if (SUCCEEDED(CreateStreamOnHGlobal(nullptr, TRUE, stream.receive_ptr())) && SUCCEEDED(stream->Write(data->get_ptr(), data->get_size(), &bytes_written)))
+							pfc::com_ptr_t<IStream> stream = SHCreateMemStream((const uint8_t*)data->get_ptr(), bytes);
+							if (stream.is_valid())
 							{
 								pfc::ptrholder_t<Gdiplus::Bitmap> bitmap = new Gdiplus::Bitmap(stream.get_ptr());
 								if (bitmap.is_valid() && bitmap->GetLastStatus() == Gdiplus::Ok)
